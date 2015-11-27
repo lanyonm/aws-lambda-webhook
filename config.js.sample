@@ -1,0 +1,6 @@
+module.exports = {
+  hipchat: {
+    token: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    room: '1111111'
+  }
+};
