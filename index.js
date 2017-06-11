@@ -3,7 +3,8 @@
 var http = require('https');
 var config = require('./config.js');
 
-exports.pingdomToHipchat = function(event, context) {
+exports.pingdomToHipchat = function(event, context, callback) {
+  context.callbackWaitsForEmptyEventLoop = false;
   // the contents of event is dependent on the configuration of API Gateway
   // console.log('the message is', event.message);
 
@@ -38,17 +39,17 @@ exports.pingdomToHipchat = function(event, context) {
     res.on('end', function () {
       if (res.statusCode === 204) {
         console.log('success - message delivered to hipchat');
-        context.succeed('message delivered to hipchat');
+        callback(null, 'message delivered to hipchat');
       } else {
         console.log('failed with', res.statusCode);
-        context.fail('hipchat API returned an error');
+        callback(res.statusCode, 'hipchat API returned an error');
       }
     });
   });
 
   req.on('error', function(e) {
     console.log('problem with request:', e.message);
-    context.fail('failed to deliver message to hipchat');
+    callback(e, 'failed to deliver message to hipchat: ' + e.message);
   });
 
   req.write(JSON.stringify(hc_msg));
